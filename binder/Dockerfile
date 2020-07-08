@@ -16,18 +16,17 @@ ENV NB_UID ${NB_UID}
 ENV HOME /home/${NB_USER}
 WORKDIR /home/${NB_USER}
 
-# Copying files
-RUN echo ${HOME}
-COPY . ${HOME}
-
-RUN pwd ${HOME}
-RUN ls ${HOME}
+# Installing Requirements
+COPY requirements.txt ${HOME}/requirements.txt
 RUN pip3 install -r ${HOME}/requirements.txt
 
 RUN adduser --disabled-password \
     --gecos "Default user" \
     --uid ${NB_UID} \
     ${NB_USER}
+
+# Copying files
+COPY . ${HOME}
 
 USER root
 RUN chown -R ${NB_UID} ${HOME}
