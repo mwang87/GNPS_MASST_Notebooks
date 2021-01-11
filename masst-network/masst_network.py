@@ -19,7 +19,6 @@ def create_masst_network(spectra_matches_df, output_graphml, output_image=None):
 
     # Getting all the MASST data
     for dataset in dataset_matches:
-        print(dataset)
         filtered_dataset = [current_dataset for current_dataset in all_datasets if current_dataset["dataset"] == dataset]
         dataset_task = filtered_dataset[0]["task"]
         continuous_id = requests.get("http://gnps.ucsd.edu/ProteoSAFe/ContinuousIDServlet?task={}".format(dataset_task)).json()
@@ -30,11 +29,9 @@ def create_masst_network(spectra_matches_df, output_graphml, output_image=None):
         
         dataset_spectra_matches = spectra_matches_df[spectra_matches_df["dataset_id"] == dataset]
         clusters_matched = list(set(dataset_spectra_matches["cluster_scan"]))
-        print(clusters_matched)
         
         network_df["Node1"] = network_df["Node1"].astype(int)
         filtered_edges = network_df[network_df["Node1"].isin(clusters_matched)]
-        print(len(filtered_edges))
         
         for edge in filtered_edges.to_dict(orient="records"):
             cluster = edge["Node2"]
@@ -45,15 +42,11 @@ def create_masst_network(spectra_matches_df, output_graphml, output_image=None):
             output_dict["scan"] = cluster
             all_node_usi_list.append(output_dict)
 
-    print(len(all_node_usi_list), "Total Spectra")
-
     # Now we will load up all the spectra and do stuff with it
     from ming_spectrum_library import Spectrum
     import spectrum_alignment
     all_spectra_list = []
     for usi_dict in all_node_usi_list:
-        print(usi_dict)
-
         usi = usi_dict["usi"]
         display_information = "{}:{}".format(usi_dict["dataset"], usi_dict["scan"])
 
