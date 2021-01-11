@@ -1,2 +1,2 @@
-run:
-	python ./masst_network.py
+test:
+	nose2 -v test
